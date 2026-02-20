@@ -217,25 +217,24 @@ public class MyArrayList<E> implements List<E>{
 
     @Override
     public ListIterator<E> listIterator() {
-        MyListIterator<E> iterator = new MyListIterator<>();
-        return iterator;
+        return new MyListIterator();
     }
 
-    class MyListIterator<E> implements ListIterator<E> {
+    private class MyListIterator implements ListIterator<E> {
 
-        int currentPosition;
+        int cursorPosition;
         boolean previousMade;
         boolean nextMade;
 
         public MyListIterator() {
-            currentPosition = 0;
+            cursorPosition = 0;
             previousMade = false;
             nextMade = false;
         }
 
         @Override
         public boolean hasNext() {
-            return currentPosition < size();
+            return cursorPosition < size();
         }
 
         @SuppressWarnings("unchecked")
@@ -246,12 +245,12 @@ public class MyArrayList<E> implements List<E>{
             }
             previousMade = false;
             nextMade = true;
-            return (E) data[currentPosition++];
+            return (E) data[cursorPosition++];
         }
 
         @Override
         public boolean hasPrevious() {
-            return currentPosition > 0;
+            return cursorPosition > 0;
         }
 
         @SuppressWarnings("unchecked")
@@ -262,33 +261,33 @@ public class MyArrayList<E> implements List<E>{
             }
             previousMade = true;
             nextMade = false;
-            return (E) data[--currentPosition];
+            return (E) data[--cursorPosition];
         }
 
         @Override
         public int nextIndex() {
-            if (currentPosition == size()){
+            if (cursorPosition == size()){
                 return size();
             }
-            return currentPosition;
+            return cursorPosition;
         }
 
         @Override
         public int previousIndex() {
-            if (currentPosition == 0){
+            if (cursorPosition == 0){
                 return 0;
             }
-            return currentPosition - 1;
+            return cursorPosition - 1;
         }
 
         @Override
         public void remove() {
             if (previousMade) {
-                // TODO
+                MyArrayList.this.remove(cursorPosition++);
                 
                 previousMade = false;
             } else if(nextMade){
-                // TODO
+                MyArrayList.this.remove(--cursorPosition);
                 nextMade = false;
             } else {
                 throw new IllegalStateException();
@@ -297,18 +296,27 @@ public class MyArrayList<E> implements List<E>{
 
         @Override
         public void set(E e) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'set'");
+            if (previousMade) {
+                MyArrayList.this.set(cursorPosition+1, e);
+                
+                previousMade = false;
+            } else if(nextMade){
+                MyArrayList.this.set(cursorPosition, e);
+                nextMade = false;
+            } else {
+                throw new IllegalStateException();
+            }
         }
+        
 
         @Override
         public void add(E e) {
             if (previousMade) {
-                // TODO
+                MyArrayList.this.add(++cursorPosition, e);
                 
                 previousMade = false;
             } else if(nextMade){
-                // TODO
+                MyArrayList.this.add(cursorPosition++, e);
                 nextMade = false;
             } else {
                 throw new IllegalStateException();
