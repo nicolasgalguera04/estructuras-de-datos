@@ -43,7 +43,6 @@ public class MyArrayList<E> implements List<E>{
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public boolean add(E e) {
         ensureCapacity();
@@ -237,7 +236,6 @@ public class MyArrayList<E> implements List<E>{
             return cursorPosition < size();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public E next() {
             if (!hasNext()){
@@ -253,7 +251,6 @@ public class MyArrayList<E> implements List<E>{
             return cursorPosition > 0;
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public E previous() {
             if (!hasPrevious()){
@@ -323,6 +320,54 @@ public class MyArrayList<E> implements List<E>{
             }
         }
 
+    }
+
+    @Override
+    public void clear() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'clear'");
+    }
+
+
+    @Override
+    public Iterator<E> iterator() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+    }
+
+
+    @Override
+    public ListIterator<E> listIterator(int index) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
+    }
+
+
+    @Override
+    public E remove(int index) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'remove'");
+    }
+
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'removeAll'");
+    }
+
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'retainAll'");
+    }
+
+
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'subList'");
     }
 
 }
