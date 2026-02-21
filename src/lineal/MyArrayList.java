@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 public class MyArrayList<E> implements List<E>{
 
     private E[] data;
-    int size;
+    private int size;
     private static final int DEFAULT_CAPACITY = 10;
 
     @SuppressWarnings("unchecked")
@@ -24,6 +24,7 @@ public class MyArrayList<E> implements List<E>{
     @SuppressWarnings("unchecked")
     public MyArrayList(int initialCapacity) {
         data = (E[]) new Object[initialCapacity];
+        size = initialCapacity;
     }
 
     
@@ -31,7 +32,7 @@ public class MyArrayList<E> implements List<E>{
     private void ensureCapacity() {
         if (size >= data.length) {
             // duplicamos la capacidad
-            int newCapacity = data.length * 2;
+            int newCapacity = Math.max(1, data.length * 2);
             E[] newData = (E[]) new Object[newCapacity];
         
             // copiamos los elementos
@@ -60,13 +61,14 @@ public class MyArrayList<E> implements List<E>{
             data[i] = data[i-1];
         }
         data[index] = e;
+        size++;
     }
 
     
     @Override
     public boolean remove(Object o) {
         for (int i = 0; i < size(); i++) {
-            if (o.equals(data[i]) ) {
+            if (o == null ? data[i] == null : o.equals(data[i]) ) {
                 for (int j = i; j < size()-1; j++) {
                     data[j] = data[j+1];
                 }
@@ -75,6 +77,21 @@ public class MyArrayList<E> implements List<E>{
             }
         }
         return false;
+    }
+
+    @Override
+    public E remove(int index) {
+        
+        if (index < 0 || index >= size()) {
+            throw new IndexOutOfBoundsException();
+        }
+
+        E element = data[index];
+        for (int i = index; i < size; i++) {
+            data[i] = data[i+1];
+        }
+        data[--size] = null;    
+        return element;
     }
 
     @Override
@@ -115,7 +132,7 @@ public class MyArrayList<E> implements List<E>{
                 a[i] = (T) data[i];
             return a;
         } else {
-            T[] newArray = Arrays.copyOf(a, size());
+            T[] newArray = (T[]) Arrays.copyOf(a, size(), a.getClass());
             for (int i = 0; i < size(); i++) 
                 newArray[i] = (T) data[i];
             return newArray;
@@ -175,7 +192,7 @@ public class MyArrayList<E> implements List<E>{
     public E set(int index, E element) {
         if (index < 0 || index >= size())
             throw new IndexOutOfBoundsException();
-       
+        
         E previous = data[index];
         data[index] = element;
         return previous;
@@ -215,8 +232,74 @@ public class MyArrayList<E> implements List<E>{
     }
 
     @Override
+    public void clear() {
+        for (int i = 0; i < size; i++) {
+            data[i] = null;
+        }
+
+        size = 0;
+    }
+
+
+    @Override
+    public Iterator<E> iterator() {
+        return new MyListIterator();
+    }
+
+    @Override
     public ListIterator<E> listIterator() {
         return new MyListIterator();
+    }
+
+    @Override
+    public ListIterator<E> listIterator(int index) {
+        return new MyListIterator(index);
+    }
+
+    @Override
+    public boolean removeAll(Collection<?> c) {
+        boolean removed = false;
+        
+        for (Object o : c){
+            if (remove(o))
+                removed = true;
+        }
+
+        return removed;
+    }
+
+
+    @Override
+    public boolean retainAll(Collection<?> c) {
+        boolean anyRemoved = false;
+        Iterator<E> it = this.iterator();
+
+        while (it.hasNext()) {
+            E e = it.next();
+            if (!c.contains(e)) {
+                it.remove();    
+                anyRemoved = true;
+            }
+        }
+        return anyRemoved;
+    }
+
+
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        if (fromIndex < 0 || toIndex > size || fromIndex > toIndex)
+            throw new IndexOutOfBoundsException();
+
+        List<E> list = new MyArrayList<>(toIndex - fromIndex);
+
+        if (fromIndex == toIndex)
+            return list;
+
+        for (int i= fromIndex; i < toIndex; i++){
+            list.add(data[i]);
+        }
+
+        return list;
     }
 
     private class MyListIterator implements ListIterator<E> {
@@ -229,6 +312,13 @@ public class MyArrayList<E> implements List<E>{
             cursorPosition = 0;
             previousMade = false;
             nextMade = false;
+        }
+
+        public MyListIterator(int index) {
+            cursorPosition = index;
+            previousMade = false;
+            nextMade = false;
+
         }
 
         @Override
@@ -294,7 +384,7 @@ public class MyArrayList<E> implements List<E>{
         @Override
         public void set(E e) {
             if (previousMade) {
-                MyArrayList.this.set(cursorPosition+1, e);
+                MyArrayList.this.set(cursorPosition, e);
                 
                 previousMade = false;
             } else if(nextMade){
@@ -321,53 +411,4 @@ public class MyArrayList<E> implements List<E>{
         }
 
     }
-
-    @Override
-    public void clear() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'clear'");
-    }
-
-
-    @Override
-    public Iterator<E> iterator() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
-    }
-
-
-    @Override
-    public ListIterator<E> listIterator(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listIterator'");
-    }
-
-
-    @Override
-    public E remove(int index) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'remove'");
-    }
-
-
-    @Override
-    public boolean removeAll(Collection<?> c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeAll'");
-    }
-
-
-    @Override
-    public boolean retainAll(Collection<?> c) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'retainAll'");
-    }
-
-
-    @Override
-    public List<E> subList(int fromIndex, int toIndex) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'subList'");
-    }
-
 }
